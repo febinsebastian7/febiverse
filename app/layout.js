@@ -1,15 +1,27 @@
 import "./globals.css";
-import { personName, siteDescription, siteName, siteUrl } from "./site";
+import "./brand-polish.css";
+import {
+  personId,
+  personName,
+  siteDescription,
+  siteName,
+  siteUrl,
+  socialProfiles,
+  websiteId,
+} from "./site";
 
 export const metadata = {
-  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+  metadataBase: new URL(siteUrl),
   title: {
-    default: personName + " | " + siteName,
+    default: "Febin Sebastian | Web Developer, Video Editor & Digital Creator",
     template: "%s | " + siteName,
   },
   description: siteDescription,
   applicationName: siteName,
-  alternates: siteUrl ? { canonical: "/" } : undefined,
+  alternates: { canonical: "/" },
+  authors: [{ name: personName, url: siteUrl }],
+  creator: personName,
+  publisher: personName,
   robots: {
     index: true,
     follow: true,
@@ -27,28 +39,73 @@ export const metadata = {
     siteName,
     title: personName + " | " + siteName,
     description: siteDescription,
-    url: siteUrl ? "/" : undefined,
-    images: siteUrl
-      ? [
-          {
-            url: "/images/febin-hero.png",
-            alt: "Febin Sebastian",
-          },
-        ]
-      : undefined,
+    url: "/",
+    images: [
+      {
+        url: "/images/febin-hero.png",
+        alt: "Portrait of Febin Sebastian",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: personName + " | " + siteName,
     description: siteDescription,
-    images: siteUrl ? ["/images/febin-hero.png"] : undefined,
+    images: ["/images/febin-hero.png"],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+    ],
+    shortcut: ["/favicon.ico"],
+    apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
   },
 };
 
 export default function RootLayout({ children }) {
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": personId,
+        name: personName,
+        alternateName: "Febin",
+        url: siteUrl,
+        image: siteUrl + "/images/febin-hero.png",
+        description: siteDescription,
+        jobTitle: "Student, Web Developer, Video Editor, and Digital Creator",
+        knowsAbout: [
+          "Web development",
+          "Programming",
+          "Video editing",
+          "Digital content creation",
+          "Creative technology",
+        ],
+        sameAs: socialProfiles,
+      },
+      {
+        "@type": "WebSite",
+        "@id": websiteId,
+        url: siteUrl,
+        name: siteName,
+        description: siteDescription,
+        publisher: { "@id": personId },
+      },
+    ],
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema).replace(/</g, "\\u003c") }}
+        />
+      </body>
     </html>
   );
 }

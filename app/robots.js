@@ -6,6 +6,6 @@ export default function robots() {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: siteUrl ? siteUrl + "/sitemap.xml" : undefined,
+    sitemap: siteUrl + "/sitemap.xml",
   };
 }

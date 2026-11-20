@@ -1,10 +1,20 @@
 export const siteName = "FEBIVERSE";
 export const personName = "Febin Sebastian";
 export const siteDescription =
-  "Febin Sebastian is a video editor, web developer, and digital content creator focused on building engaging digital experiences and visual content. Through FEBIVERSE, he showcases his creative work, web projects, and services.";
+  "Explore the portfolio of Febin Sebastian, a student, web developer, video editor, and digital creator. Discover creative work, experiments, and services at FEBIVERSE.";
 
-const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+export const siteUrl = "https://febiverse.com";
+export const personId = siteUrl + "/#febin-sebastian";
+export const websiteId = siteUrl + "/#website";
 
-export const siteUrl = configuredUrl
-  ? configuredUrl.replace(/\/$/, "")
-  : undefined;
+export const socialProfiles = [
+  "https://www.linkedin.com/in/febin-sebastian777/",
+  "https://www.instagram.com/febiverse/",
+  "https://github.com/febinsebastian7",
+];
+
+export const razorpayPaymentConfig = {
+  liveUrl: "https://rzp.io/rzp/1G8MBLCt",
+};
+
+export const buyMeACoffeeUrl = razorpayPaymentConfig.liveUrl;

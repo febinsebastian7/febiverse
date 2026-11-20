@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { personName, siteDescription, siteName, siteUrl } from "./site";
+import {
+  buyMeACoffeeUrl,
+  personId,
+  personName,
+  siteDescription,
+  siteUrl,
+  socialProfiles,
+  websiteId,
+} from "./site";
 
 const services = [
   {
@@ -21,11 +29,10 @@ const services = [
   },
 ];
 
-// Add the real profile URLs here when available. Empty values intentionally render
-// as disabled icon placeholders instead of sending visitors to an unrelated profile.
 const SOCIAL_LINKS = {
-  linkedin: "https://www.linkedin.com/in/febin-sebastian777/",
-  instagram: "https://www.instagram.com/febiverse/",
+  linkedin: socialProfiles[0],
+  instagram: socialProfiles[1],
+  github: socialProfiles[2],
 };
 
 const approachSteps = [
@@ -65,6 +72,10 @@ function InstagramIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4" /><circle cx="12" cy="12" r="3.4" /><circle cx="17.3" cy="6.8" r=".7" fill="currentColor" stroke="none" /></svg>;
 }
 
+function GitHubIcon() {
+  return <svg className="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.9a9.1 9.1 0 0 0-2.88 17.73c.46.08.62-.2.62-.44v-1.72c-2.53.55-3.06-1.07-3.06-1.07-.42-1.06-1.02-1.34-1.02-1.34-.83-.57.06-.56.06-.56.92.07 1.4.94 1.4.94.81 1.39 2.14.99 2.66.76.08-.59.32-.99.57-1.22-2.02-.23-4.14-1.01-4.14-4.49 0-.99.35-1.8.93-2.44-.09-.23-.4-1.15.09-2.4 0 0 .76-.24 2.5.93A8.7 8.7 0 0 1 12 7.37c.77 0 1.54.1 2.27.31 1.73-1.17 2.49-.93 2.49-.93.49 1.25.18 2.17.09 2.4.58.64.93 1.45.93 2.44 0 3.49-2.12 4.26-4.14 4.49.32.28.61.82.61 1.65v2.45c0 .24.16.52.62.44A9.1 9.1 0 0 0 12 2.9Z" /></svg>;
+}
+
 function ServiceIcon({ type }) {
   if (type === "code") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16" /></svg>;
   if (type === "layout") return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1" /><path d="M3 9h18M9 9v11" /></svg>;
@@ -97,33 +108,32 @@ function FooterSocialLink({ label, href, children }) {
   return <a className="social-link" href={href} target="_blank" rel="noopener noreferrer" aria-label={`Visit Febin Sebastian on ${label}`}>{children}</a>;
 }
 
-function PersonalBrandSchema() {
-  const personId = siteUrl ? siteUrl + "/#febin-sebastian" : "#febin-sebastian";
-  const websiteId = siteUrl ? siteUrl + "/#website" : "#website";
+function HeroSocialLink({ label, href, children }) {
+  return <a className="hero-social-link" href={href} target="_blank" rel="noopener noreferrer" aria-label={`Visit Febin Sebastian on ${label}`}>{children}<span>{label.toUpperCase()}</span></a>;
+}
+
+function HomePageSchema() {
   const schema = {
     "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Person",
-        "@id": personId,
-        name: personName,
-        description: siteDescription,
-        url: siteUrl,
-        image: siteUrl ? siteUrl + "/images/febin-hero.png" : undefined,
-        knowsAbout: ["Web development", "Video editing", "Digital content creation"],
-      },
-      {
-        "@type": "WebSite",
-        "@id": websiteId,
-        name: siteName,
-        description: siteDescription,
-        url: siteUrl,
-        publisher: { "@id": personId },
-      },
-    ],
+    "@type": "WebPage",
+    "@id": siteUrl + "/#webpage",
+    url: siteUrl,
+    name: "Febin Sebastian | Web Developer, Video Editor & Digital Creator",
+    description: siteDescription,
+    isPartOf: { "@id": websiteId },
+    about: { "@id": personId },
+    mainEntity: { "@id": personId },
   };
 
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />;
+}
+
+function SupportAction() {
+  if (!buyMeACoffeeUrl) {
+    return <span className="button-fill button-fill--disabled" aria-disabled="true">BUY ME A COFFEE</span>;
+  }
+
+  return <a className="button-fill" href={buyMeACoffeeUrl} target="_blank" rel="noopener noreferrer" aria-label="Support FEBIVERSE in a new tab">BUY ME A COFFEE <ArrowIcon /></a>;
 }
 
 export default function Home() {
@@ -337,7 +347,7 @@ export default function Home() {
 
   return (
     <main>
-      <PersonalBrandSchema />
+      <HomePageSchema />
       <section className="hero" id="top">
         <div className="grain" aria-hidden="true" />
         <div className="hero-glow hero-glow-left" aria-hidden="true" />
@@ -354,12 +364,13 @@ export default function Home() {
             <h1 className="hero-copy-item hero-headline"><span>I build digital</span><span>experiences that</span><span>work <em>as good</em></span><span><em>as they look.</em></span></h1>
             <p className="hero-description hero-copy-item hero-copy-item--description">I design and build modern websites that combine thoughtful visuals, useful functionality, and clean development.</p>
             <div className="hero-actions hero-copy-item hero-copy-item--action"><a className="button-fill" href="#contact">START A PROJECT <ArrowIcon /></a></div>
+            <div className="hero-socials hero-copy-item" aria-label="Find Febin Sebastian online"><span className="hero-socials__label">FIND ME</span><HeroSocialLink label="LinkedIn" href={SOCIAL_LINKS.linkedin}><LinkedInIcon /></HeroSocialLink><HeroSocialLink label="Instagram" href={SOCIAL_LINKS.instagram}><InstagramIcon /></HeroSocialLink><HeroSocialLink label="GitHub" href={SOCIAL_LINKS.github}><GitHubIcon /></HeroSocialLink></div>
             <p className="availability hero-copy-item hero-copy-item--availability"><b /> AVAILABLE FOR SELECT PROJECTS</p>
           </div>
 
           <div className="hero-poster" aria-label="Portrait of Febin Sebastian">
             <HeroName />
-            <div className="portrait-wrap portrait-enter"><img src="/images/febin-hero.png" alt="Febin Sebastian" /></div>
+            <div className="portrait-wrap portrait-enter"><img src="/images/febin-hero.png" width="1121" height="1403" alt="Portrait of Febin Sebastian" /></div>
             <HeroName outlined />
             <p className="side-note">TURNING<br />IDEAS<br />INTO<br />REALITY</p>
             <p className="portrait-signature signature-enter">Developer<br />Creative<br />Technologist</p>
@@ -393,10 +404,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section about-section" id="about">
-        <div className="about-image reveal"><img src="/images/febin-about.jpg" alt="Febin Sebastian working outdoors with a laptop" /><div className="about-image-shade" /><p className="about-script">Same<br />person,<br />different<br />perspectives.</p></div>
+      <section className="section about-section" id="about" aria-labelledby="about-heading">
+        <div className="about-image reveal"><img src="/images/febin-about.jpg" width="4672" height="5840" alt="Portrait of Febin Sebastian outdoors" /><div className="about-image-shade" /><p className="about-script">Same<br />person,<br />different<br />perspectives.</p></div>
         <div className="about-content container">
-          <div className="about-copy"><SectionLabel number="03" className="reveal">ABOUT ME</SectionLabel><h2 className="reveal reveal-stagger" style={{ "--reveal-delay": "75ms" }}>A developer<br />with a <em>creative mind.</em></h2><p className="reveal reveal-stagger" style={{ "--reveal-delay": "145ms" }}>I&apos;m Febin Sebastian, the person behind FEBIVERSE: a video editor, web developer, and digital content creator. I&apos;m also a BCA student at Christ College, Mysuru, building websites and exploring software development alongside my studies.</p></div>
+          <div className="about-copy"><SectionLabel number="03" className="reveal">ABOUT ME</SectionLabel><h2 id="about-heading" className="reveal reveal-stagger" style={{ "--reveal-delay": "75ms" }}>A little <em>about me.</em></h2><div className="about-copy__body reveal reveal-stagger" style={{ "--reveal-delay": "145ms" }}><p>Hey, I&apos;m {personName}. I&apos;m a student and a curious mind who enjoys figuring out how things work.</p><p>I explore technology, experiment with creative ideas, and turn things I imagine into something real. From building websites and writing code to editing videos and creating digital content, I&apos;m always learning along the way.</p><p>FEBIVERSE is my corner of the internet, a place to share what I create, what I learn, and what I&apos;m working on.</p></div><a className="text-link reveal reveal-stagger" style={{ "--reveal-delay": "220ms" }} href="/about">READ MORE ABOUT FEBIN <ArrowIcon /></a></div>
           <p className="about-vertical">DEVELOP<br />DESIGN<br />EDIT<br />EXPLORE<br />REPEAT</p>
         </div>
       </section>
@@ -405,7 +416,14 @@ export default function Home() {
         <div className="container contact-grid reveal"><div><SectionLabel number="04">CONTACT</SectionLabel><h2>Have a project<br /><em>in mind?</em></h2></div><div className="contact-copy"><p>Let&apos;s build something useful, distinctive, and well-designed.</p><a className="email-placeholder" href="mailto:febiverse@gmail.com"><MailIcon /><span>febiverse@gmail.com</span><ArrowIcon /></a></div><div className="contact-action"><a className="button-fill" href="mailto:febiverse@gmail.com">LET&apos;S BUILD SOMETHING <ArrowIcon /></a></div></div>
       </section>
 
-      <footer className="reveal"><div className="container"><div><a className="brand" href="#top">FEBIVERSE<span>.</span></a><p>FULL-STACK DEVELOPER&nbsp; · &nbsp;CREATIVE TECHNOLOGIST</p></div><div className="footer-meta"><div className="footer-socials" aria-label="Social links"><FooterSocialLink label="LinkedIn" href={SOCIAL_LINKS.linkedin}><LinkedInIcon /></FooterSocialLink><FooterSocialLink label="Instagram" href={SOCIAL_LINKS.instagram}><InstagramIcon /></FooterSocialLink></div><p>BUILT WITH INTENTION.</p></div></div></footer>
+      <section className="section support-section" aria-labelledby="support-heading">
+        <div className="container support-grid reveal">
+          <div><SectionLabel number="05">SUPPORT</SectionLabel><h2 id="support-heading">Enjoying what I <em>create?</em></h2></div>
+          <div className="support-copy"><span className="support-coffee" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 9h11v6.5A3.5 3.5 0 0 1 12.5 19h-4A3.5 3.5 0 0 1 5 15.5V9Z" /><path d="M16 11h1.2a2.3 2.3 0 0 1 0 4.6H16M7 5.5c.6.5.6 1.2 0 1.7M11 5.5c.6.5.6 1.2 0 1.7" /></svg></span><p>Every project starts with curiosity and a little experimentation. If you&apos;ve enjoyed something I&apos;ve built or shared, consider supporting my work. It helps me keep learning, creating, and building more.</p><SupportAction />{!buyMeACoffeeUrl && <p className="support-note">Support link coming soon.</p>}</div>
+        </div>
+      </section>
+
+      <footer className="reveal"><div className="container"><div><a className="brand" href="#top">FEBIVERSE<span>.</span></a><p>FULL-STACK DEVELOPER&nbsp; · &nbsp;CREATIVE TECHNOLOGIST</p></div><div className="footer-meta"><div className="footer-socials" aria-label="Social links"><FooterSocialLink label="LinkedIn" href={SOCIAL_LINKS.linkedin}><LinkedInIcon /></FooterSocialLink><FooterSocialLink label="Instagram" href={SOCIAL_LINKS.instagram}><InstagramIcon /></FooterSocialLink><FooterSocialLink label="GitHub" href={SOCIAL_LINKS.github}><GitHubIcon /></FooterSocialLink></div><p>BUILT WITH INTENTION.</p></div></div></footer>
     </main>
   );
 }
